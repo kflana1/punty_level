@@ -2,17 +2,18 @@
 #include <Adafruit_MMA8451.h>
 #include <MovingAverage.h>
 
-int speakerPin = 9;
-int numTones = 10;
-/*int tones[] = {261, 277, 294, 311, 330, 349, 370, 392, 415, 440};
-//            mid C  C#   D    D#   E    F    F#   G    G#   A*/
+// This is the list of tones to use in Hertz
 int tones[] = {200, 220, 240, 260, 280, 380, 400, 420, 440, 460};
+// This is the half-angle about horizontal over which the level is silent
+int zeroSpace = 5;
+
+//here are some fixed variables that you shouldn't have to mess with
+int speakerPin = 9;
 int tsz = sizeof(tones) / sizeof(int);
 float lN = (float) tsz / 2.0;
 int offset = 0;
-int zeroSpace = 5;
 float sR = 90-zeroSpace;
-MovingAverage filter(0.08);
+MovingAverage filter(0.08); //the alpha for the filter is 0.08
 Adafruit_MMA8451 mma = Adafruit_MMA8451();
 
 void setup() {
@@ -28,6 +29,8 @@ void setup() {
   /*Serial.print("Range = "); Serial.print(2 << mma.getRange());
   Serial.println("G");*/
 
+  // everytime the level resets, it'll take the average of
+  // 1s worth of accelerometer data and subtract this as an offset
   float avg;
   for (int i = 0; i < 1000; i++){
     mma.read();
